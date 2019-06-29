@@ -48,7 +48,7 @@ Open NSynth Super is super simple to integrate into any production music rig. Li
 
 The physical interface of Open NSynth Super is constructed around a square touch interface. Using dials in the corners of the touch surface, musicians can select four source sounds and use the touch interface to explore the sounds that the NSynth algorithm has generated between them. In addition, the instrument also has controls for tuning the new sounds via the fine controls.
 
-**(A) Instrument selectors** - These rotary dials are used to select the instruments that are assigned to the corners of the interface.
+**(A) Instrument selectors & patch storage** - These rotary dials are used to select the instruments that are assigned to the corners of the interface. In version 1.2.0, these selectors can be pushed down to store or clicked to recall settings patches.
 
 **(B) OLED display** - A high-contrast display shows you the state of the instrument and additional information about the controls that you are interacting with.
 
@@ -72,9 +72,9 @@ There are several distinct components to each Open NSynth Super unit: a custom P
 
 ##### Hardware & firmware
 
-The electronics are built around a Raspberry Pi 3 running Raspbian Linux (note that the new Raspberry Pi 3B+ is not yet tested with these instructions), and a custom PCB used to read the inputs and control the outputs. A microcontroller on the PCB manages the physical inputs: there are four rotary encoders on the four corners for instrument selection; six potentiometers below the interface to control the position, envelope, and volume settings; and a capacitive grid on the surface of the PCB (exposed through the top layer of the case) used to select the mixing point of the four instruments.
+The electronics are built around a Raspberry Pi 3 running Raspbian Linux, and a custom PCB used to read the inputs and control the outputs. A microcontroller on the PCB manages the physical inputs: there are four rotary encoders on the four corners for instrument selection; six potentiometers below the interface to control the position, envelope, and volume settings; and a capacitive grid on the surface of the PCB (exposed through the top layer of the case) used to select the mixing point of the four instruments.
 
-More information on the electronics, hardware, and firmware can be found [here](/pcb_hardware), and [here](/firmware). A complete bill of materials for the case and electronics is available in this Excel [spreadsheet](https://storage.googleapis.com/open-nsynth-super/onss_bom.xlsx).
+More information on the electronics, hardware, and firmware can be found [here](/pcb_hardware), and [here](/firmware). A complete bill of materials for the case and electronics is available in this Excel [spreadsheet](https://storage.googleapis.com/open-nsynth-super/onss_bom_1.2.0.xlsx).
 
 ##### Software
 Open NSynth Super runs a multisampler audio application built on [openFrameworks](http://openframeworks.cc) to process incoming MIDI note data and generate sound output. More information about this application can be found in the [software readme file](/app).
@@ -101,7 +101,7 @@ The example image file includes the following software features:
 You will need the following off-the-shelf items to complete this guide:
 
 - Micro SD card (16GB or 64GB)
-- Raspberry Pi 3 ***Note that the new 3B+ Raspberry Pi is not yet tested with these instructions***
+- Raspberry Pi 3B+
 - 5V 2A micro-USB power supply
 
 You will also need the following Open NSynth Super-specific items, which are detailed in the steps below:
@@ -129,14 +129,14 @@ In order to test the board, you will need to have a working Open NSynth Super so
 
 ### 3. Prepare the SD card
 
-There are two preconfigured OS images available, both loaded with sample audio and fully configured for use with NSynth Super. Depending on the size of your SD card, you can choose either the [64GB image](https://storage.googleapis.com/open-nsynth-super/images/onss_1.1_full.img) or [16GB image](https://storage.googleapis.com/open-nsynth-super/images/onss_1.0_lite.img).
+There are two preconfigured OS images available, both loaded with sample audio and fully configured for use with NSynth Super. Depending on the size of your SD card, you can choose either the [64GB image](https://storage.googleapis.com/open-nsynth-super/images/onss_1.2.0_full.img.bz2) or [16GB image](https://storage.googleapis.com/open-nsynth-super/images/onss_1.2.0_lite.img.bz2).
 
 The easiest way to create the SD card is to use GUI software like [Etcher](https://etcher.io/), Win32DiskImager, or the [SD Card Association's](https://www.sdcard.org/downloads/formatter_4/) formatter to burn the example image to a card.
 
-Alternatively, you can use the ``dd`` command natively on *NIX systems:
+The supplied images are compressed in bz2 format. These can be decompressed on the fly when writing to an SD card using the following command:
 
 ```
-$ sudo dd if=<IMAGE NAME> of=<DISK NAME>
+$ bzcat <IMAGE NAME> | sudo dd of=<DISK NAME>
 ```
 
  Connect a keyboard and screen to the Raspberry Pi, insert the SD card, and plug a USB power cable into the socket on the Open NSynth Super mainboard. You should see the Pi booting up on the connected display; when you receive a prompt, you can login with the default username and password: pi / raspberry. **Note that the device might run a file system check when you first boot up from the new card – this will take about 5 minutes depending on the size of the disk.**
@@ -218,6 +218,16 @@ The pipeline has the following stages:
 6. Package and deploy the audio to the device
 
 **More detailed instructions on how to run the pipeline, including how to set up and provision a GPU-equipped Linux server for processing audio, are available [here](/audio).**
+
+---
+
+### Changelog
+
+##### Version 1.2.0
+The latest version of Open NSynth Super is 1.2.0. This version adds support for storage and recall of patches and settings, swaps the instrument selector encoders for push-button variants, and introduces note looping to enable sustaining notes beyond their original sample length. Version 1.2.0 software is backwards compatible with version 1.0.0 hardware, although the push-button patch storage feature is not available.
+
+##### Version 1.0.0
+Version 1.0.0 is tagged in this repository. The example disk images for software version 1.0.0 are available for download as a [64GB image](https://storage.googleapis.com/open-nsynth-super/images/onss_1.1_full.img) or [16GB image](https://storage.googleapis.com/open-nsynth-super/images/onss_1.0_lite.img).
 
 ---
 

@@ -34,7 +34,7 @@ limitations under the License.
 #define RUNNING_NOTE_OFF_WAIT_FOR_VEL 7
 
 
-MidiThread::MidiThread(Poco::FastMutex &synthMutex, NSynth &synth)
+MidiThread::MidiThread(std::mutex &synthMutex, NSynth &synth)
 	: ofThread(), synthMutex(synthMutex), synth(synth){
 }
 
@@ -93,12 +93,23 @@ bool MidiThread::setup(const std::string &device, int channel){
 void MidiThread::threadedFunction(){
 	auto read1 = [this]()->uint8_t{
 		uint8_t result;
-		while(read(deviceFd, &result, 1) != 1){
+		while(true){
 			if(!isThreadRunning()){
 				return 0xff;
 			}
+
+			int readCount = read(deviceFd, &result, 1);
+			if(readCount != 1){
+				continue;
+			}
+
+			// ignore system real time bytes
+			if(result >= 0xf8){
+				continue;
+			}
+
+			return result;
 		}
-		return result;
 	};
 
 	uint8_t state = WAIT_FOR_STATUS;
